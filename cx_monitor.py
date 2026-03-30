@@ -322,18 +322,23 @@ def generate_html(weeks_data, timestamp):
         elif status == "sold_out":
             book_btn = f'<a href="{cx_url}" target="_blank" rel="noopener" class="sec-book-btn sec-book-waitlist">Check availability &rarr;</a>'
 
+        count_price = ""
+        if count_text and price_html:
+            count_price = f'{count_text} &middot; {price_html}'
+        elif count_text:
+            count_price = count_text
+        elif price_html:
+            count_price = price_html
+
         return f'''<div class="day-sec {cls}">
   <div class="sec-head">
     <div class="sec-left">
-      <span class="sec-heading">{heading}</span>
       <span class="sec-date">{date_display}</span>
+      <span class="sec-direction">{heading}</span>
     </div>
-    <div class="sec-right">
-      <span class="sec-status {cls}">{label}</span>
-      {f'<span class="sec-count">{count_text}</span>' if count_text else ''}
-    </div>
+    <span class="sec-status {cls}">{label}</span>
   </div>
-  {price_html}
+  {f'<div class="sec-meta">{count_price}</div>' if count_price else ''}
   {f'<div class="flights">{flights_html}</div>' if flights_html else ''}
   {sold_out_html}
   {book_btn}
@@ -571,41 +576,38 @@ header {{
 .day-sec.st-no-service {{ opacity: 0.5; }}
 
 .sec-head {{
-  display: flex; align-items: flex-start; justify-content: space-between;
-  gap: 8px; margin-bottom: 4px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px; margin-bottom: 2px;
 }}
 .sec-left {{ display: flex; flex-direction: column; gap: 1px; }}
-.sec-heading {{
-  font-size: 0.8rem; font-weight: 600; color: var(--text-1);
-}}
 .sec-date {{
-  font-size: 0.73rem; color: var(--text-3);
+  font-size: 0.9rem; font-weight: 600; color: var(--text-1);
+  letter-spacing: -0.01em;
 }}
-.sec-right {{
-  display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
-  flex-shrink: 0;
+.sec-direction {{
+  font-size: 0.68rem; color: var(--text-3);
+  font-weight: 400; text-transform: uppercase; letter-spacing: 0.04em;
 }}
 .sec-status {{
   font-size: 0.65rem; font-weight: 700; padding: 2px 8px;
   border-radius: 5px; letter-spacing: 0.04em; text-transform: uppercase;
+  flex-shrink: 0;
 }}
 .sec-status.st-available {{ background: var(--green-bg); color: var(--green); }}
 .sec-status.st-limited {{ background: var(--amber-bg); color: var(--amber); }}
 .sec-status.st-sold-out {{ background: var(--red-bg); color: var(--red); }}
 .sec-status.st-no-service {{ background: var(--card-border); color: var(--text-3); }}
-.sec-count {{
-  font-size: 0.7rem; color: var(--text-3);
+.sec-meta {{
+  font-size: 0.73rem; color: var(--text-3);
+  margin-bottom: 2px;
 }}
 .sec-price {{
-  display: block;
-  font-size: 0.85rem; font-weight: 600;
+  font-size: 0.73rem; font-weight: 600;
   color: var(--jade-light);
-  margin-top: 2px;
 }}
 .sec-note {{
-  display: block;
-  font-size: 0.78rem; color: var(--text-3);
-  font-style: italic; margin-top: 2px;
+  font-size: 0.73rem; color: var(--text-3);
+  font-style: italic;
 }}
 
 /* ── Return group ──────────────────────── */
@@ -980,10 +982,10 @@ def generate_sample_data(weeks):
 
         def make_day(status, flights_pool, so_pool):
             if status == "available":
-                flights = random.sample(flights_pool, k=3)
+                flights = sorted(random.sample(flights_pool, k=3), key=lambda x: x["departure"])
                 return {"date": "", "status": "available", "flights": flights, "cheapest_hkd": min(f["price_hkd"] for f in flights), "count": 3, "sold_out_flights": [], "book_url": bk}
             elif status == "limited":
-                flights = random.sample(flights_pool, k=1)
+                flights = sorted(random.sample(flights_pool, k=1), key=lambda x: x["departure"])
                 return {"date": "", "status": "limited", "flights": flights, "cheapest_hkd": flights[0]["price_hkd"], "count": 1, "sold_out_flights": [], "book_url": bk}
             else:
                 return {"date": "", "status": "sold_out", "flights": [], "cheapest_hkd": None, "count": 0, "sold_out_flights": so_pool, "book_url": bk}
