@@ -779,20 +779,17 @@ body.show-soldout .sold-out-flights {{
   background: #ffffff08;
 }}
 
-/* ── Refresh bar ──────────────────────── */
-.refresh-bar {{
-  display: flex; align-items: center; justify-content: space-between;
-  max-width: 720px; margin: 8px auto 0;
-  padding: 12px 16px;
+/* ── Refresh card (inside .cards grid) ── */
+.refresh-card {{
   background: var(--card);
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
+  padding: 14px 16px;
+  grid-column: 1 / -1;
 }}
-.refresh-info {{
-  display: flex; align-items: center; gap: 8px;
-}}
-.refresh-icon {{
-  font-size: 1.1rem; color: var(--text-3);
+.refresh-top {{
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
 }}
 .refresh-text {{
   font-size: 0.73rem; color: var(--text-2);
@@ -807,7 +804,7 @@ body.show-soldout .sold-out-flights {{
   background: none;
   border: 1px solid var(--jade);
   border-radius: 8px;
-  padding: 6px 14px;
+  padding: 5px 14px;
   cursor: pointer;
   text-decoration: none;
   transition: background 0.15s;
@@ -815,16 +812,14 @@ body.show-soldout .sold-out-flights {{
 .refresh-btn:hover {{
   background: var(--jade-glow);
 }}
-
-/* ── Footer ────────────────────────────── */
-footer {{
-  text-align: center;
-  padding: 12px 16px 32px;
-  font-size: 0.7rem; color: var(--text-3);
-  max-width: 720px; margin: 0 auto;
+.refresh-footer {{
+  font-size: 0.68rem; color: var(--text-3);
   line-height: 1.6;
+  border-top: 1px solid var(--card-border);
+  padding-top: 10px;
 }}
-footer a {{ color: var(--text-2); }}
+.refresh-footer a {{ color: var(--text-2); text-decoration: none; }}
+.refresh-footer a:hover {{ text-decoration: underline; }}
 
 /* ── Desktop ───────────────────────────── */
 @media (min-width: 768px) {{
@@ -839,8 +834,6 @@ footer a {{ color: var(--text-2); }}
   .header-row {{ max-width: 960px; }}
   .timestamp {{ display: block; }}
   header {{ padding: 18px 24px; }}
-  .refresh-bar {{ max-width: 960px; }}
-  footer {{ max-width: 960px; }}
 }}
 </style>
 </head>
@@ -878,20 +871,17 @@ footer a {{ color: var(--text-2); }}
 
 <div class="cards">
 {cards_html}
-</div>
-
-<div class="refresh-bar">
-  <div class="refresh-info">
-    <span class="refresh-icon">&#8635;</span>
-    <span class="refresh-text">Last updated <strong>{ts}</strong></span>
+<div class="refresh-card">
+  <div class="refresh-top">
+    <span class="refresh-text">Updated <strong>{ts}</strong></span>
+    <a href="javascript:location.reload()" class="refresh-btn">Refresh</a>
   </div>
-  <a href="javascript:location.reload()" class="refresh-btn" title="Data is refreshed automatically every 6 hours. Reload to check for new data.">Refresh</a>
+  <div class="refresh-footer">
+    Cathay Pacific Business Class &middot; Non-stop only &middot; Prices are indicative<br>
+    <a href="{CATHAY_BOOK_URL}" target="_blank" rel="noopener">Book on cathaypacific.com</a>
+  </div>
 </div>
-
-<footer>
-  Cathay Pacific Business Class &middot; Non-stop only<br>
-  Prices are indicative. <a href="{CATHAY_BOOK_URL}" target="_blank" rel="noopener">Book on cathaypacific.com</a>
-</footer>
+</div>
 
 <script>
 function setCurrency(curr) {{
