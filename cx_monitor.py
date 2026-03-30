@@ -120,7 +120,7 @@ def search_economy_check(origin, destination, date):
     return _search_with_retry(filters)
 
 
-CATHAY_BOOK_URL = "https://www.cathaypacific.com/cx/en_HK/book-a-trip/flight-search.html"
+CATHAY_BOOK_URL = "https://www.cathaypacific.com/cx/en_HK/book-a-trip.html"
 
 
 def make_book_url(origin_code, dest_code):
@@ -777,10 +777,47 @@ body.show-soldout .sold-out-flights {{
   background: #ffffff08;
 }}
 
+/* ── Refresh bar ──────────────────────── */
+.refresh-bar {{
+  display: flex; align-items: center; justify-content: space-between;
+  max-width: 720px; margin: 8px auto 0;
+  padding: 12px 16px;
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+}}
+.refresh-info {{
+  display: flex; align-items: center; gap: 8px;
+}}
+.refresh-icon {{
+  font-size: 1.1rem; color: var(--text-3);
+}}
+.refresh-text {{
+  font-size: 0.73rem; color: var(--text-2);
+}}
+.refresh-text strong {{
+  color: var(--text-1); font-weight: 600;
+}}
+.refresh-btn {{
+  font-family: inherit;
+  font-size: 0.73rem; font-weight: 600;
+  color: var(--jade-light);
+  background: none;
+  border: 1px solid var(--jade);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+}}
+.refresh-btn:hover {{
+  background: var(--jade-glow);
+}}
+
 /* ── Footer ────────────────────────────── */
 footer {{
   text-align: center;
-  padding: 20px 16px 32px;
+  padding: 12px 16px 32px;
   font-size: 0.7rem; color: var(--text-3);
   max-width: 720px; margin: 0 auto;
   line-height: 1.6;
@@ -800,6 +837,7 @@ footer a {{ color: var(--text-2); }}
   .header-row {{ max-width: 960px; }}
   .timestamp {{ display: block; }}
   header {{ padding: 18px 24px; }}
+  .refresh-bar {{ max-width: 960px; }}
   footer {{ max-width: 960px; }}
 }}
 </style>
@@ -816,7 +854,7 @@ footer a {{ color: var(--text-2); }}
         <button class="curr-btn active" data-curr="hkd" onclick="setCurrency('hkd')">HKD</button>
         <button class="curr-btn" data-curr="krw" onclick="setCurrency('krw')">KRW</button>
       </div>
-      <span class="timestamp">{ts}</span>
+      <!-- timestamp moved to refresh bar -->
     </div>
   </div>
   <div class="header-row controls-row">
@@ -840,9 +878,17 @@ footer a {{ color: var(--text-2); }}
 {cards_html}
 </div>
 
+<div class="refresh-bar">
+  <div class="refresh-info">
+    <span class="refresh-icon">&#8635;</span>
+    <span class="refresh-text">Last updated <strong>{ts}</strong></span>
+  </div>
+  <a href="javascript:location.reload()" class="refresh-btn" title="Data is refreshed automatically every 6 hours. Reload to check for new data.">Refresh</a>
+</div>
+
 <footer>
-  Cathay Pacific Business Class &middot; Non-stop only &middot; Updated {ts}<br>
-  Prices are indicative. <a href="https://www.cathaypacific.com/cx/en_HK/book-a-trip/flight-search.html" target="_blank" rel="noopener">Book on cathaypacific.com</a>
+  Cathay Pacific Business Class &middot; Non-stop only<br>
+  Prices are indicative. <a href="{CATHAY_BOOK_URL}" target="_blank" rel="noopener">Book on cathaypacific.com</a>
 </footer>
 
 <script>
