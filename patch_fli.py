@@ -12,21 +12,20 @@ with open(flights_path) as f:
     src = f.read()
 
 if "currency" not in src:
-    # Add __init__ with currency/country/language
+    # Replace bare __init__ with one that accepts currency/country/language
     src = src.replace(
-        "class SearchFlights(BaseSearch):",
-        '''class SearchFlights(BaseSearch):
-    def __init__(self, currency="USD", country="us", language="en"):
-        super().__init__()
+        '    def __init__(self):\n        """Initialize the search client for flight searches."""\n        self.client = get_client()',
+        '''    def __init__(self, currency="USD", country="us", language="en"):
+        """Initialize the search client for flight searches."""
+        self.client = get_client()
         self.currency = currency
         self.country = country
-        self.language = language
-''',
+        self.language = language''',
     )
-    # Patch URL to include params
+    # Patch URL to include currency/country/language params
     src = src.replace(
-        "self.BASE_URL",
-        'f"{self.BASE_URL}?hl={self.language}&gl={self.country}&curr={self.currency}"',
+        "url=self.BASE_URL,",
+        'url=f"{self.BASE_URL}?hl={self.language}&gl={self.country}&curr={self.currency}",',
         1,
     )
     # Add aircraft extraction
